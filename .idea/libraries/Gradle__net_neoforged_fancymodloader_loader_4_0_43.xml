@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: net.neoforged.fancymodloader:loader:4.0.43" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="net.neoforged.fancymodloader" artifactId="loader" version="4.0.43" baseVersion="4.0.43" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/4.0.43/fb10b7bf2f568a9676ad8b426b19c23badbbd98a/loader-4.0.43.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/4.0.43/b706bc486e2696e6a7881f3e55cb46c9e79b98f2/loader-4.0.43-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

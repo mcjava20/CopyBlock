@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "XXX", "XXX"],
+  "key": {
+    "X": { "item": "minecraft:green_wool" }
+  },
+  "result": {
+    "id": "copyblock:green_copy_block",
+    "count": 1
+  }
+}

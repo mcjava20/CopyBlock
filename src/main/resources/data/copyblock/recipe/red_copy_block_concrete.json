@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["XXX", "XXX", "XXX"],
+  "key": {
+    "X": { "item": "minecraft:red_concrete" }
+  },
+  "result": {
+    "id": "copyblock:red_copy_block",
+    "count": 1
+  }
+}

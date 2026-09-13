@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "copyblock:block/green_copy_block" },
+    "lit=true": { "model": "copyblock:block/green_copy_block" }
+  }
+}
