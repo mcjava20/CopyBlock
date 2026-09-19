@@ -44,9 +44,9 @@ public class GreenCopyBlock extends Block implements EntityBlock {
             GreenCopyBlockEntity entity = (GreenCopyBlockEntity) level.getBlockEntity(pos);
             if (entity != null) {
                 entity.setPlayerUUID(player.getUUID());
-                // 记录 p1 上方方块作为模板
+                // 记录 p1 上方方块作为模板；上方有方块时才会"装填"
                 entity.captureTemplate(pos);
-                boolean has = entity.hasTemplate() && !entity.getTemplateState().isAir();
+                boolean has = entity.isArmed();
                 level.setBlock(pos, state.setValue(LIT, has), Block.UPDATE_CLIENTS);
             }
             PlayerCopyData data = PlayerCopyData.get((ServerLevel) level);
@@ -66,7 +66,7 @@ public class GreenCopyBlock extends Block implements EntityBlock {
         if (uuid == null) return;
 
         entity.captureTemplate(pos);
-        boolean has = entity.hasTemplate() && !entity.getTemplateState().isAir();
+        boolean has = entity.isArmed();
         if (state.getValue(LIT) != has) {
             level.setBlock(pos, state.setValue(LIT, has), Block.UPDATE_CLIENTS);
         }
