@@ -24,12 +24,20 @@ public class GreenCopyBlockEntity extends BlockEntity {
     @Nullable
     private CompoundTag templateBlockEntityTag;
 
+    /**
+     * 是否已"装填"：绿方块上方曾经放过非空气方块。
+     * 一旦为 true，即使上方被挖成空气也保持 true，允许复制空气来移除方块。
+     * 仅在绿方块刚放置且上方一直是空气时为 false（此时禁止复制）。
+     */
+    private boolean armed;
+
     public GreenCopyBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.GREEN_COPY_BLOCK_ENTITY.get(), pos, state);
     }
 
     /**
      * 读取 p1 上方那一格作为模板（含 NBT）。
+     * 上方为非空气方块时会把 armed 置 true；为空气时不改变 armed。
      */
     public void captureTemplate(BlockPos p1) {
         Level level = this.getLevel();
@@ -40,6 +48,11 @@ public class GreenCopyBlockEntity extends BlockEntity {
 
         this.templateState = state;
         this.templateBlockEntityTag = null;
+
+        // 上方放有实际方块时才"装填"，挖成空气时保留已装填状态
+        if (!state.isAir()) {
+            this.armed = true;
+        }
 
         BlockEntity be = level.getBlockEntity(templatePos);
         if (be != null) {
@@ -68,6 +81,13 @@ public class GreenCopyBlockEntity extends BlockEntity {
         return templateState != null;
     }
 
+    /**
+     * 是否已装填（上方曾经放过非空气方块）。LIT 与是否允许复制都依赖此状态。
+     */
+    public boolean isArmed() {
+        return armed;
+    }
+
     public UUID getPlayerUUID() {
         return playerUUID;
     }
@@ -89,6 +109,7 @@ public class GreenCopyBlockEntity extends BlockEntity {
         if (templateBlockEntityTag != null) {
             tag.put("TemplateBlockEntity", templateBlockEntityTag.copy());
         }
+        tag.putBoolean("Armed", armed);
     }
 
     @Override
@@ -106,5 +127,6 @@ public class GreenCopyBlockEntity extends BlockEntity {
         if (tag.contains("TemplateBlockEntity")) {
             templateBlockEntityTag = tag.getCompound("TemplateBlockEntity").copy();
         }
+        armed = tag.getBoolean("Armed");
     }
 }
