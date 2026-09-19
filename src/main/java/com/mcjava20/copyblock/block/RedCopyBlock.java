@@ -67,12 +67,15 @@ public class RedCopyBlock extends Block {
             BlockState templateState = greenEntity.getTemplateState();
             CompoundTag templateBeTag = greenEntity.getTemplateBlockEntityTag();
 
-            if (templateState == null || templateState.isAir()) {
-                player.sendSystemMessage(Component.literal("§e错误：绿方块上方没有可作为模板的方块！"));
+            // 必须先在绿方块上方放过方块（装填）才能复制；
+            // 装填后即使上方被挖成空气，也允许复制空气来移除方块
+            if (templateState == null || !greenEntity.isArmed()) {
+                player.sendSystemMessage(Component.literal("§e错误：请先在绿方块上方放置方块作为模板！"));
                 data.removeP1(uuid);
                 data.removeP2(uuid);
                 return;
             }
+            boolean isAir = templateState.isAir();
 
             // ========== 读取游戏规则上限（关键改动） ==========
             // 根据你的游戏版本选择常量名：
@@ -98,23 +101,23 @@ public class RedCopyBlock extends Block {
                 return;
             }
 
-            // 执行填充
+            // 执行填充（含 p1/p2 自身位置，复制方块本身也会被覆盖）
             fillArea(level, box[0], box[1], templateState, templateBeTag);
 
             data.removeP1(uuid);
             data.removeP2(uuid);
             greenEntity.clearTemplate();
 
-            if (greenState.hasProperty(GreenCopyBlock.LIT)) {
-                level.setBlock(greenPos, greenState.setValue(GreenCopyBlock.LIT, false), Block.UPDATE_ALL);
-            }
+            // 不再恢复绿方块 LIT，让复制方块本身也被覆盖
 
-            player.sendSystemMessage(Component.literal("§a填充完成，共替换 " + total + " 个方块"));
+            String verb = isAir ? "清除" : "替换";
+            player.sendSystemMessage(Component.literal("§a填充完成，共" + verb + " " + total + " 个方块"));
         }
     }
 
     private static void fillArea(Level level, BlockPos min, BlockPos max,
                                  BlockState templateState, @Nullable CompoundTag templateBeTag) {
+        boolean isAir = templateState.isAir();
         for (int x = min.getX(); x <= max.getX(); x++) {
             for (int y = min.getY(); y <= max.getY(); y++) {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
@@ -123,7 +126,8 @@ public class RedCopyBlock extends Block {
 
                     level.setBlock(placePos, templateState, Block.UPDATE_ALL);
 
-                    if (templateBeTag != null) {
+                    // 空气模板无 BlockEntity，跳过
+                    if (!isAir && templateBeTag != null) {
                         CompoundTag beTag = templateBeTag.copy();
                         beTag.putInt("x", placePos.getX());
                         beTag.putInt("y", placePos.getY());
